@@ -2,10 +2,10 @@ library(data.table)
 
 mylist = c("Nature","Science","Annual Review of Entomology","Trends in Ecology & Evolution",
            "Nature Ecology & Evolution","Nature Communications","Science Advances",
-           "Proceedings of the National Academy of Sciences","Current Biology","Ecology Letters",
+           "PROCEEDINGS OF THE NATIONAL ACADEMY OF SCIENCES OF THE UNITED STATES OF AMERICA","Current Biology","Ecology Letters",
            "Physical Review Letters","eLife","Plos Biology","Methods in Ecology and Evolution",
            "BMC Biology","Communications Biology","Philosophical Transactions of the Royal Society B-Biological Sciences",
-           "Functional Ecology","Ecology","Proceedings of the Royal Society B","Evolution Letters",
+           "Functional Ecology","Ecology","PROCEEDINGS OF THE ROYAL SOCIETY B-BIOLOGICAL SCIENCES","Evolution Letters",
            "Current Opinion in Insect Science","Journal of Animal Ecology","Plos Computational Biology",
            "Scientific Reports","Frontiers in Ecology and Evolution","Journal of the Royal Society Interface",
            "American Naturalist","Interface Focus","Oikos","Heredity","Biology Letters","Evolution",
@@ -27,24 +27,24 @@ mylist = c("Nature","Science","Annual Review of Entomology","Trends in Ecology &
            "Ethology Ecology & Evolution","Journal of Insect Behavior","Journal of Ethology","Biological Rhythm Research",
            "Sociobiology","Artificial Life","Artificial Life and Robotics","Zoological Letters",
            "Molecular Phylogenetics and Evolution","Environmental Entomology",
-           "iScience")
+           "iScience", "Physiological Entomology", "STAR Protocols", "Southeastern Naturalist")
 
 mylist.Up <- toupper(mylist)
 
-iodir <- "2023"
+iodir <- "2024"
 file.list = list.files(iodir, pattern=".csv")
 
 df <- NULL
 for(i in file.list){
   d.temp    <- data.frame(fread(file.path(iodir, i), header=T))
   temp.name <- toupper(d.temp$Journal.name)
-  d.temp    <- d.temp[temp.name %in% mylist.Up, c("Journal.name", "X2022.JIF")]
+  d.temp    <- d.temp[temp.name %in% mylist.Up, c("Journal.name", "JIF")]
   df        <- rbind(df, d.temp)
 }
 
 df <- df[!duplicated(df),]
-df$X2022.JIF <- as.numeric(df$X2022.JIF)
-df <- df[order(df$X2022.JIF, decreasing = T),]
+df$JIF <- as.numeric(df$JIF)
+df <- df[order(df$JIF, decreasing = T),]
 
 write.csv(df, file = file.path(iodir,"2023-ifs.csv"))
 
