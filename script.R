@@ -1,4 +1,5 @@
 library(data.table)
+library(dplyr)
 
 mylist = c("Nature","Science","Annual Review of Entomology","Trends in Ecology & Evolution",
            "Nature Ecology & Evolution","Nature Communications","Science Advances",
@@ -27,11 +28,30 @@ mylist = c("Nature","Science","Annual Review of Entomology","Trends in Ecology &
            "Ethology Ecology & Evolution","Journal of Insect Behavior","Journal of Ethology","Biological Rhythm Research",
            "Sociobiology","Artificial Life","Artificial Life and Robotics","Zoological Letters",
            "Molecular Phylogenetics and Evolution","Environmental Entomology",
-           "iScience", "Physiological Entomology", "STAR Protocols", "Southeastern Naturalist")
+           "iScience", "Physiological Entomology", "STAR Protocols", "Southeastern Naturalist",
+           "Journal of Pest Science", "Biological Invasions", "Zoological Letters")
+
 
 mylist.Up <- toupper(mylist)
 
-iodir <- "2024"
+# 2025
+df    <- data.frame(fread("2025/jif.csv", header=T))
+df <- df |> filter(!is.na(IF)) |>
+  mutate(
+    journalname =  toupper(journalname),
+    IF = as.numeric(IF)) |>
+  group_by(journalname) |>
+  summarise(IF = mean(IF, na.rm = T), .groups = "drop") |>
+  na.omit()
+
+df <- df |> filter(journalname %in% mylist.Up)
+
+write.csv(df, file = file.path(2025,"2025-ifs.csv"))
+df |> filter(str_detect(journalname, "RHYTHM" ))
+
+###
+
+iodir <- "2025"
 file.list = list.files(iodir, pattern=".csv")
 
 df <- NULL
